@@ -69,6 +69,10 @@ export default class Experience extends EventEmitter {
     }
 
     update() {
+        if (this.debug.active) {
+            this.debug.stats.begin()
+        }
+
         this.camera.update()
         this.renderer.update()
         if(this.world)
@@ -77,5 +81,9 @@ export default class Experience extends EventEmitter {
             this.loading.update()
         if(this.userInputs)
             this.userInputs.update()
+
+        if (this.debug.active) {
+            this.debug.stats.end()
+        }
     }
 }  
