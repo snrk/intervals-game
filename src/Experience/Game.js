@@ -42,7 +42,7 @@ export default class Game {
         if (!this.experience.world.ui.isTutorialPlaying) {
             this.experience.world.ui.intervalsDiskIn.play()
         }
-        this.experience.world.ui.minimapIn.play()
+        this.experience.world.ui.minimap.minimapIn.play()
         this.experience.world.ui.backButtonIn.play()
         // Raycarter Keyboard Cube IN
         this.experience.world.stage.raycastKeyboardIn.play()

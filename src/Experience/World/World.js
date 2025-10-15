@@ -2,7 +2,7 @@ import * as THREE from "three"
 import Experience from '../Experience'
 import Environment from "./Environment"
 import Stage from "./Stage"
-import UI from "../UI"
+import UI from "../Ui/UI"
 import Tones from "../Tones"
 
 export default class World {
@@ -56,8 +56,8 @@ export default class World {
                 this.ui.fullscreenButton, 
                 this.ui.intervalsButton, 
                 ...this.ui.intervalGroup.children,
-                this.ui.plusButton, 
-                this.ui.minusButton,
+                this.ui.minimap.plusButton, 
+                this.ui.minimap.minusButton,
                 this.ui.backButton,
             ]
             this.objectsForTestingPersp = [this.stage.raycastKeyboard]
@@ -192,11 +192,11 @@ export default class World {
                 this.ui.playDiskIntervals(objectClicked)
             }
             // minimap PLUS Button
-            else if (objectClicked === this.ui.plusButton) {
+            else if (objectClicked === this.ui.minimap.plusButton) {
             this.experience.game.increaseOctave()
             }
             // minimap MINUS Button
-            else if (objectClicked === this.ui.minusButton) {
+            else if (objectClicked === this.ui.minimap.minusButton) {
                 this.experience.game.decreaseOctave()
             }
             // Back Button

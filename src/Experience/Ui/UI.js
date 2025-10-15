@@ -1,14 +1,11 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
-import Experience from "./Experience"
-import { INTERVALS } from './intervals'
+import Experience from "../Experience"
+import { INTERVALS } from '../intervals'
+import Minimap from './Minimap'
 
 export default class UI {
     constructor() {
-
-        //Option
-        this.intervalsInfos = INTERVALS
-
         //Setup
         this.experience = new Experience()
         this.camerasGroup = this.experience.camera.camerasGroup
@@ -23,10 +20,7 @@ export default class UI {
 
         this.model = this.resources.items.stageModel.scene
 
-        this.MINIMAP_START_C2 = -(54) + 1.8
-        this.MINIMAP_OCTAVE = 54
-        this.MINIMAP_KEY = 54/12
-        this.elevenKeys = this.MINIMAP_OCTAVE - this.MINIMAP_KEY
+        this.minimap = new Minimap()
 
         this.pianoKeys = []
         for (let i = 1; i <= 24; i++) {
@@ -44,13 +38,14 @@ export default class UI {
             this.debugFolder = this.debug.ui.addFolder('ui').open()
         }
 
+        
+
         this.setOrientationMessage()
 
         this.setFullscreenButton()
         this.setBackButton()
         this.setIntervalsButton()
         this.setDiskIntervals()
-        this.setMinimap()
         this.setGameTextes()
 
         //tuto
@@ -127,7 +122,7 @@ export default class UI {
 
         this.lineArrow.scale.set(0, 0, 0)
         this.lineArrow.rotation.y = -Math.PI * 0.25
-        this.minimapOffset.add(this.lineArrow)
+        this.minimap.minimapOffset.add(this.lineArrow)
 
         this.setLineArrowPosition()
         // if (this.debug.active) {
@@ -149,12 +144,12 @@ export default class UI {
         this.curveArrowPlus.scale.set(0, 0, 0)
         this.curveArrowMinus = this.curveArrowPlus.clone()
         this.curveArrowPlus.rotation.y = 2.18
-        this.plusButton.add(this.curveArrowPlus)
+        this.minimap.plusButton.add(this.curveArrowPlus)
 
         //Clone and naming - & +
         this.curveArrowMinus.scale.x *= -1
         this.curveArrowMinus.rotation.y = -2.18
-        this.minusButton.add(this.curveArrowMinus)
+        this.minimap.minusButton.add(this.curveArrowMinus)
 
         this.setCurveArrowPosition()
 
@@ -280,7 +275,6 @@ export default class UI {
         //     this.debugFolder.add(this.gameTextes.material.map.offset, 'x').name('gameTextOffsetX').min(-1).max(1.1).step(0.001)
         //     this.debugFolder.add(this.gameTextes.material.map.offset, 'y').name('gameTextOffsetY').min(-1).max(1.1).step(0.001)
         // }
-
     }
 
     /**
@@ -310,7 +304,7 @@ export default class UI {
 
     exitSettingState() {
         this.intervalsDiskIn.reverse()
-        this.minimapIn.reverse()
+        this.minimap.minimapIn.reverse()
         this.backButtonIn.reverse()
     }
     enterMenuState() {
@@ -327,55 +321,6 @@ export default class UI {
             gsap.killTweensOf(keyMesh.rotation)
             gsap.fromTo(keyMesh.rotation, { x: 0  }, { x: 0.07, duration: 0.2, ease: 'power2.inOut', yoyo: true, repeat: 1, })
         }
-    }
-
-    /**
-     * Minimap group
-     */
-    setMinimap() {
-
-        // Group Elements
-        this.minimapGroup = new THREE.Group()
-
-        // Group animated InOut
-        this.minimapOffset = new THREE.Group()
-
-        // Button +
-        this.plusButton = this.model.getObjectByName("buttonPlus")
-        this.plusButton.scale.set(300, 300, 300)
-        this.plusButton.position.y = 12
-        this.plusButton.position.x = 240
-        this.minimapOffset.add(this.plusButton)
-
-        // Button -
-        this.minusButton = this.model.getObjectByName("buttonMinus")
-        this.minusButton.scale.set(300, 300, 300)
-        this.minusButton.position.y = 12
-        this.minusButton.position.x = -240
-        this.minimapOffset.add(this.minusButton)
-
-        //Minimap
-        this.minimap = this.model.getObjectByName("minimap")
-        this.minimap.scale.set(200, 200, 200)
-        this.minimapOffset.add(this.minimap)
-
-        // Minimap Highlight
-        this.minimapHighlight = this.model.getObjectByName("minimapHighlight")
-        this.minimapHighlight.scale.set(205, 200, 200)
-        this.minimapHighlight.position.x = this.MINIMAP_START_C2
-        this.minimapOffset.add(this.minimapHighlight)
-        this.setMinimapPosition()
-
-        this.minimapGroup.add(this.minimapOffset)
-        this.sceneOrtho.add(this.minimapGroup)
-    }
-
-    setMinimapPosition () {
-        this.minimapGroup.position.set(
-            0,
-            -this.experience.sizes.height * .5 + 30,
-            -50
-        )
     }
 
     /**
@@ -468,7 +413,7 @@ export default class UI {
         }
         clickedObject.hoverTimeline.reverse()
         this.intervalsDiskIn.reverse()
-        this.minimapIn.reverse()
+        this.minimap.minimapIn.reverse()
     }
 
     /**
@@ -524,10 +469,6 @@ export default class UI {
         this.backButtonIn = gsap.timeline({ paused: true })
             .fromTo(this.backButton.scale, { x: 0, y: 0, z: 0, }, { duration: .5, x: 300, y: 300, z: 300, ease: "power2.inOut", }, "<")
 
-        // Minimap
-        this.minimapIn = gsap.timeline({ paused: true })
-            .fromTo(this.minimapOffset.position, { y: -100}, { duration: .5, y: 0, ease: "power2.inOut", }, "<")
-
         // Fullscreen
         this.fullscreenIn = gsap.timeline({ paused: true })
             .fromTo(this.fullscreenButton.scale, { x: 0, y: 0, z: 0, }, { duration: .5, x: 300, y: 300, z: 300, ease: "power2.inOut", }, "<")
@@ -539,7 +480,6 @@ export default class UI {
         // Disk Intervals
         this.intervalsDiskIn = gsap.timeline({ paused: true })
             .fromTo(this.intervalGroup.scale, { x: 0, y: 0, z: 0}, {delay: 0.1, duration: .9, x: 1, y: 1, z: 1, ease: "power2.inOut", }, "<")
-
     }
 
     resize () {
@@ -547,7 +487,10 @@ export default class UI {
         this.setBackButtonPosition()
         this.setIntervalsButtonPosition()
         this.setDiskIntervalsPosition()
-        this.setMinimapPosition()
+
+        if(this.minimap)
+            this.minimap.resize()
+
         this.setGameTextesPosition()
         this.setTutoTitlePosition()
         this.setTutoTextePosition()
@@ -556,22 +499,7 @@ export default class UI {
     }
 
     update() {
-        const octaveOffset = (this.game.baseOctaveNote - 36) / 12
-
-        // Octave initial position
-        const currentOctaveStartX = this.MINIMAP_START_C2 + (octaveOffset * this.MINIMAP_OCTAVE)
-
-        // Apply offset drag
-        const dragX = this.camera.dragOffset.x
-
-        // Only on 11 keys
-        const highlightX = THREE.MathUtils.mapLinear(
-            dragX,
-            0,
-            this.camera.DRAG_LIMIT_X,
-            currentOctaveStartX, 
-            currentOctaveStartX + this.elevenKeys
-        )
-        this.minimapHighlight.position.x = highlightX
+        if(this.minimap)
+            this.minimap.update()
     }
 }
