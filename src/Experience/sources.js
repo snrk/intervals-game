@@ -22,7 +22,7 @@ export const mainSources = [
   {
     name: 'stageModel',
     type: 'gltfModel',
-    path: 'models/scene.glb ',
+    path: 'models/sceneDraco.glb ',
   },
   { name: 'pianoC1', type: 'audio', path: 'samples/C1.wav' },
   { name: 'pianoC2', type: 'audio', path: 'samples/C2.wav' },
